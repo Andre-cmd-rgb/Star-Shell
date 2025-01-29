@@ -25,22 +25,18 @@ build:
 	go build -o $(BINARY_NAME)$(BINARY_EXT) .
 
 build-all:
-	@for GOOS in $(PLATFORMS); do \
-		for GOARCH in $(ARCHITECTURES); do \
-			echo "Building for $$GOOS-$$GOARCH"; \
-			ifeq ($$GOOS,windows) \
-				$(MAKE) build-platform GOOS=$$GOOS GOARCH=$$GOARCH; \
-			else \
-				GOOS=$$GOOS GOARCH=$$GOARCH $(MAKE) build-platform; \
-			endif \
-		done \
-	done
-
-build-platform:
-	@echo "Building for platform: $(GOOS)-$(GOARCH)"
-	OUTPUT=$(BUILD_DIR)/$(BINARY_NAME)-$(GOOS)-$(GOARCH); \
-	if [ "$(GOOS)" = "windows" ]; then OUTPUT=$$OUTPUT.exe; fi; \
-	go build -o $$OUTPUT .
+	@echo "Building for darwin-amd64"
+	GOOS=darwin GOARCH=amd64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-darwin-amd64 $(BINARY_NAME).go
+	@echo "Building for darwin-arm64"
+	GOOS=darwin GOARCH=arm64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-darwin-arm64 $(BINARY_NAME).go
+	@echo "Building for linux-amd64"
+	GOOS=linux GOARCH=amd64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-linux-amd64 $(BINARY_NAME).go
+	@echo "Building for linux-arm64"
+	GOOS=linux GOARCH=arm64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-linux-arm64 $(BINARY_NAME).go
+	@echo "Building for windows-amd64"
+	GOOS=windows GOARCH=amd64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-windows-amd64.exe $(BINARY_NAME).go
+	@echo "Building for windows-arm64"
+	GOOS=windows GOARCH=arm64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-windows-arm64.exe $(BINARY_NAME).go
 
 clean:
 	rm -rf $(BUILD_DIR) $(BINARY_NAME) *.exe
